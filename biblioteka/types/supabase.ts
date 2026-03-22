@@ -29,7 +29,6 @@ export interface Reservation {
   status: ReservationStatus
   created_at: string
   updated_at: string
-  // relations
   book?: Book
   profile?: Profile
 }

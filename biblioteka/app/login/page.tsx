@@ -1,14 +1,13 @@
 'use client'
 
 import { login } from '../auth/actions'
-import { useState } from 'react'
+import { useState, use } from 'react'
 import Link from 'next/link'
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: { message?: string }
+export default function LoginPage(props: {
+  searchParams: Promise<{ message?: string }>
 }) {
+  const searchParams = use(props.searchParams)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -21,7 +20,6 @@ export default function LoginPage({
       setError(result.error)
       setLoading(false)
     }
-    // if successful, login action redirects
   }
 
   return (

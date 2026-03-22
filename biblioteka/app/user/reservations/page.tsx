@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import { Reservation } from '@/types/supabase'
+import { CancelForm } from './cancel-form'
 
 export default async function UserReservationsPage() {
   const supabase = await createClient()
@@ -10,7 +10,6 @@ export default async function UserReservationsPage() {
     redirect('/login')
   }
 
-  // Fetch user reservations with book details
   const { data: reservations, error } = await supabase
     .from('reservations')
     .select(`
@@ -34,8 +33,6 @@ export default async function UserReservationsPage() {
         return null
     }
   }
-
-  // Wymagany format daty
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pl-PL', {
       year: 'numeric',
@@ -89,32 +86,7 @@ export default async function UserReservationsPage() {
                   {getStatusBadge(reservation.status)}
                   
                   {reservation.status === 'pending' && (
-                    <form action={async () => {
-                      'use server'
-                      const supabaseServer = await createClient()
-                      // Zwraca rezerwację, by odzyskać książkę
-                      const { data: res } = await supabaseServer.from('reservations').select('book_id').eq('id', reservation.id).single()
-                      
-                      if (res) {
-                        // Zwróć egzemplarz
-                        const { data: book } = await supabaseServer.from('books').select('available_copies').eq('id', res.book_id).single()
-                        if (book) {
-                          await supabaseServer.from('books').update({
-                            available_copies: book.available_copies + 1
-                          }).eq('id', res.book_id)
-                        }
-                        // Anuluj rezerwację (usuń) - w realnej aplikacji zmieniamy status na anulowana
-                        await supabaseServer.from('reservations').delete().eq('id', reservation.id)
-                      }
-                      redirect('/user/reservations')
-                    }}>
-                      <button
-                        type="submit"
-                        className="text-sm font-medium text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 underline decoration-red-200 dark:decoration-red-900 underline-offset-4"
-                      >
-                        Anuluj rezerwację
-                      </button>
-                    </form>
+                    <CancelForm reservationId={reservation.id} />
                   )}
                 </div>
               </div>

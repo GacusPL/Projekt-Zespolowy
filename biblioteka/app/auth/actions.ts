@@ -19,7 +19,6 @@ export async function login(formData: FormData) {
     return { error: error.message }
   }
 
-  // Fetch user role for redirect
   if (data?.user) {
     const { data: profile } = await supabase
       .from('profiles')
@@ -30,7 +29,6 @@ export async function login(formData: FormData) {
     if (profile?.role === 'admin') {
       redirect('/admin/dashboard')
     } else {
-      // Default to user dashboard
       redirect('/user/dashboard')
     }
   }
@@ -42,11 +40,14 @@ export async function signup(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const username = formData.get('username') as string
-  const role = formData.get('role') as string || 'user'
+  const role = 'user'
   
+  if (/\s/.test(username)) {
+    return { error: 'Nazwa użytkownika nie może zawierać spacji.' }
+  }
+
   const supabase = await createClient()
 
-  // Zarejestruj użytkownika, przekazując metadata potrzebne w triggerze SQL
   const { error } = await supabase.auth.signUp({
     email,
     password,
@@ -61,9 +62,7 @@ export async function signup(formData: FormData) {
   if (error) {
     return { error: error.message }
   }
-
-  // On successful signup we instruct the user to login.
-  // In a real app we might verify email first.
+  await supabase.auth.signOut()
   redirect(`/login?message=${encodeURIComponent('Konto zostało utworzone. Możesz się zalogować.')}`)
 }
 
@@ -71,7 +70,6 @@ export async function signout() {
   const supabase = await createClient()
   await supabase.auth.signOut()
   
-  // Clear caches and redirect
   revalidatePath('/', 'layout')
   redirect('/login')
 }

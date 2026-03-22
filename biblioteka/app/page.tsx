@@ -19,7 +19,6 @@ export default async function IndexPage() {
     }
   }
 
-  // Not logged in -> Landing page
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-4rem)] p-4 text-center">
       <div className="max-w-3xl space-y-8 animate-in fade-in zoom-in duration-500">

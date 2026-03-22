@@ -45,8 +45,10 @@ export default function RegisterPage() {
                 name="username"
                 type="text"
                 required
+                pattern="^\S+$"
+                title="Wpisz nazwę bez spacji"
                 className="relative block w-full rounded-lg border-0 py-2.5 px-3 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-600 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-500 sm:text-sm sm:leading-6 dark:bg-gray-700 transition-all"
-                placeholder="Jan Kowalski"
+                placeholder="jankowalski"
               />
             </div>
             <div>
@@ -78,20 +80,7 @@ export default function RegisterPage() {
                 placeholder="••••••••"
               />
             </div>
-            
-            <div className="pt-2">
-              <span className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rola w systemie</span>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 dark:border-gray-600 rounded-lg flex-1 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                  <input type="radio" name="role" value="user" defaultChecked className="text-indigo-600 focus:ring-indigo-600 h-4 w-4" />
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Czytelnik</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer p-3 border border-gray-200 dark:border-gray-600 rounded-lg flex-1 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                  <input type="radio" name="role" value="admin" className="text-indigo-600 focus:ring-indigo-600 h-4 w-4" />
-                  <span className="text-sm font-medium text-gray-900 dark:text-gray-100">Administrator</span>
-                </label>
-              </div>
-            </div>
+
           </div>
 
           {error && (

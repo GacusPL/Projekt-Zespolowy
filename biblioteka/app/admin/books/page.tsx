@@ -1,7 +1,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { revalidatePath } from 'next/cache'
+import { addBook } from './actions'
+import { DeleteForm } from './delete-form'
 
 export default async function AdminBooksPage() {
   const supabase = await createClient()
@@ -11,44 +12,10 @@ export default async function AdminBooksPage() {
     redirect('/login')
   }
 
-  // Fetch books
   const { data: books, error } = await supabase
     .from('books')
     .select('*')
     .order('created_at', { ascending: false })
-
-  async function deleteBook(formData: FormData) {
-    'use server'
-    const bookId = formData.get('bookId') as string
-    if (!bookId) return
-
-    const supabaseServer = await createClient()
-    await supabaseServer.from('books').delete().eq('id', bookId)
-    revalidatePath('/admin/books')
-  }
-
-  async function addBook(formData: FormData) {
-    'use server'
-    const title = formData.get('title') as string
-    const author = formData.get('author') as string
-    const category = formData.get('category') as string
-    const total_copies = parseInt(formData.get('total_copies') as string)
-    const description = formData.get('description') as string
-
-    if (!title || !author || !category || isNaN(total_copies)) return
-
-    const supabaseServer = await createClient()
-    await supabaseServer.from('books').insert({
-      title,
-      author,
-      category,
-      total_copies,
-      available_copies: total_copies, // Przy dodawaniu wszystkie są dostępne
-      description
-    })
-    
-    revalidatePath('/admin/books')
-  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -60,7 +27,6 @@ export default async function AdminBooksPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Formularz dodawania */}
         <div className="lg:col-span-1">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 sticky top-24">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Dodaj nową książkę</h2>
@@ -92,7 +58,6 @@ export default async function AdminBooksPage() {
           </div>
         </div>
 
-        {/* Lista książek */}
         <div className="lg:col-span-2">
           {error ? (
             <div className="rounded-md bg-red-50 p-4">Wystąpił błąd podczas ładowania książek.</div>
@@ -110,12 +75,7 @@ export default async function AdminBooksPage() {
                         <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-gray-700 dark:text-gray-300">Stan: {book.available_copies}/{book.total_copies}</span>
                       </div>
                     </div>
-                    <form action={deleteBook}>
-                      <input type="hidden" name="bookId" value={book.id} />
-                      <button type="submit" className="text-sm text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 font-medium">
-                        Usuń (ostrożnie!)
-                      </button>
-                    </form>
+                    <DeleteForm bookId={book.id} />
                   </li>
                 ))}
               </ul>

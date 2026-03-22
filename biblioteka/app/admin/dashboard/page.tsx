@@ -10,7 +10,6 @@ export default async function AdminDashboardPage() {
     redirect('/login')
   }
 
-  // Verify admin role
   const { data: profile } = await supabase
     .from('profiles')
     .select('role')
@@ -21,7 +20,6 @@ export default async function AdminDashboardPage() {
     redirect('/user/dashboard')
   }
 
-  // Get quick stats
   const { count: booksCount } = await supabase.from('books').select('*', { count: 'exact', head: true })
   const { count: pendingCount } = await supabase.from('reservations').select('*', { count: 'exact', head: true }).eq('status', 'pending')
   const { count: acceptedCount } = await supabase.from('reservations').select('*', { count: 'exact', head: true }).eq('status', 'accepted')

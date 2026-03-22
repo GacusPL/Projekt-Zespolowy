@@ -1,13 +1,14 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import { Book } from '@/types/supabase'
+import { ReservationForm } from './reservation-form'
 
-export default async function UserDashboardPage({
-  searchParams,
-}: {
-  searchParams: { q?: string; category?: string }
+export const dynamic = 'force-dynamic'
+
+export default async function UserDashboardPage(props: {
+  searchParams: Promise<{ q?: string; category?: string }>
 }) {
+  const searchParams = await props.searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -24,7 +25,6 @@ export default async function UserDashboardPage({
     .order('created_at', { ascending: false })
 
   if (query) {
-    // Proste wyszukiwanie po tytule i autorze
     dbQuery = dbQuery.or(`title.ilike.%${query}%,author.ilike.%${query}%`)
   }
 
@@ -34,7 +34,6 @@ export default async function UserDashboardPage({
 
   const { data: books, error } = await dbQuery
 
-  // Fetch unique categories for filter
   const { data: categoriesData } = await supabase
     .from('books')
     .select('category')
@@ -119,34 +118,7 @@ export default async function UserDashboardPage({
               </div>
               
               <div className="p-6 pt-0 mt-auto">
-                <form action={async () => {
-                  'use server'
-                  const supabaseServer = await createClient()
-                  const { data: { user } } = await supabaseServer.auth.getUser()
-                  if (!user) return
-                  
-                  // Utwórz rezerwację
-                  await supabaseServer.from('reservations').insert({
-                    user_id: user.id,
-                    book_id: book.id,
-                    status: 'pending'
-                  })
-                  
-                  // Aktualizuj dostępność
-                  await supabaseServer.from('books').update({
-                    available_copies: book.available_copies - 1
-                  }).eq('id', book.id)
-                  
-                  redirect('/user/reservations')
-                }}>
-                  <button
-                    type="submit"
-                    disabled={book.available_copies === 0}
-                    className="w-full rounded-lg bg-indigo-600 px-3 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                  >
-                    Rezerwuj egzemplarz
-                  </button>
-                </form>
+                <ReservationForm bookId={book.id} disabled={book.available_copies === 0} />
               </div>
             </div>
           ))}

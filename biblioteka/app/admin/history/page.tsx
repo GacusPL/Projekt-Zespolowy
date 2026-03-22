@@ -8,7 +8,6 @@ export default async function AdminHistoryPage() {
 
   if (!user) redirect('/login')
 
-  // Pobierz wszystkie (poza oczekującymi) rezerwacje z danymi = HISTORIA
   const { data: history, error } = await supabase
     .from('reservations')
     .select(`
@@ -26,7 +25,6 @@ export default async function AdminHistoryPage() {
 
     const supabaseServer = await createClient()
     
-    // Pobierz id książki i zwróć z powrotem na regał
     const { data: res } = await supabaseServer.from('reservations').select('book_id').eq('id', reservationId).single()
     if (res) {
       const { data: book } = await supabaseServer.from('books').select('available_copies').eq('id', res.book_id).single()

@@ -8,7 +8,6 @@ export default async function AdminReservationsPage() {
 
   if (!user) redirect('/login')
 
-  // Pobierz oczekujące rezerwacje (status = pending) z danymi użytkownika i książki
   const { data: reservations, error } = await supabase
     .from('reservations')
     .select(`
@@ -22,7 +21,7 @@ export default async function AdminReservationsPage() {
   async function processReservation(formData: FormData) {
     'use server'
     const reservationId = formData.get('reservationId') as string
-    const action = formData.get('action') as string // 'accept' or 'reject'
+    const action = formData.get('action') as string
     if (!reservationId || !action) return
 
     const supabaseServer = await createClient()
@@ -30,7 +29,6 @@ export default async function AdminReservationsPage() {
     if (action === 'accept') {
       await supabaseServer.from('reservations').update({ status: 'accepted' }).eq('id', reservationId)
     } else if (action === 'reject') {
-      // Odrzucenie: zwrot książki (zwiększ available_copies)
       const { data: res } = await supabaseServer.from('reservations').select('book_id').eq('id', reservationId).single()
       if (res) {
         const { data: book } = await supabaseServer.from('books').select('available_copies').eq('id', res.book_id).single()
