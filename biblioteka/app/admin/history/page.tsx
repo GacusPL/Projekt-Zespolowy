@@ -83,7 +83,7 @@ export default async function AdminHistoryPage() {
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
               {history.map((record) => (
-                <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+                <tr key={record.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                   <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
                     <div className="font-medium text-gray-900 dark:text-white">{record.profile?.username}</div>
                     <div className="text-gray-500 dark:text-gray-400">{record.profile?.email}</div>

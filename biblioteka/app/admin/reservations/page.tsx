@@ -69,7 +69,7 @@ export default async function AdminReservationsPage() {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
           <ul className="divide-y divide-gray-200 dark:divide-gray-700">
             {reservations.map((reservation) => (
-              <li key={reservation.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
+              <li key={reservation.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                 <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
                   <div className="space-y-1">
                     <p className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">Czytelnik: {reservation.profile?.username} ({reservation.profile?.email})</p>

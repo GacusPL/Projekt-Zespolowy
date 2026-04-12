@@ -6,8 +6,14 @@ import { deleteBook } from './actions'
 export function DeleteForm({ bookId }: { bookId: string }) {
   const [state, formAction, isPending] = useActionState(deleteBook, null)
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (!window.confirm('Czy na pewno chcesz usunąć tę książkę? Ta akcja jest nieodwracalna.')) {
+      e.preventDefault()
+    }
+  }
+
   return (
-    <form action={formAction} className="flex flex-col items-end">
+    <form action={formAction} onSubmit={handleSubmit} className="flex flex-col items-end">
       <input type="hidden" name="bookId" value={bookId} />
       <button 
         type="submit" 

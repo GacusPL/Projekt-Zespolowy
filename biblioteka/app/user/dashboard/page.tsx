@@ -16,6 +16,12 @@ export default async function UserDashboardPage(props: {
     redirect('/login')
   }
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('username')
+    .eq('id', user.id)
+    .single()
+
   const query = searchParams.q || ''
   const category = searchParams.category || ''
 
@@ -41,12 +47,31 @@ export default async function UserDashboardPage(props: {
   const categories = Array.from(new Set(categoriesData?.map(c => c.category) || []))
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Katalog Książek</h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">Przeglądaj, wyszukuj i rezerwuj swoje ulubione tytuły.</p>
+    <>
+      <div className="relative bg-indigo-900 border-b border-indigo-900/50 shadow-sm">
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-indigo-700 to-violet-800 dark:from-indigo-900 dark:to-violet-950 opacity-90"></div>
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?q=80&w=2000&auto=format&fit=crop')] opacity-10 mix-blend-overlay bg-cover bg-center"></div>
         </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+          <div className="max-w-3xl">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4 animate-in slide-in-from-bottom-4 duration-700">
+              Cześć, <span className="text-indigo-200">{profile?.username || 'Czytelniku'}</span>! 
+            </h1>
+            <p className="text-lg text-indigo-100/90 animate-in slide-in-from-bottom-6 duration-1000 max-w-2xl font-medium">
+              Witaj w bibliotece! Co dzisiaj czytamy?
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Dostępny Katalog</h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-400">Znajdź to, na co masz dziś ochotę.</p>
+          </div>
         
         <form className="flex w-full md:w-auto gap-2">
           <input
@@ -125,5 +150,6 @@ export default async function UserDashboardPage(props: {
         </div>
       )}
     </div>
+    </>
   )
 }

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { addBook } from './actions'
 import { DeleteForm } from './delete-form'
+import { BookItem } from './book-item'
 
 export default async function AdminBooksPage() {
   const supabase = await createClient()
@@ -67,16 +68,7 @@ export default async function AdminBooksPage() {
             <div className="bg-white dark:bg-gray-800 shadow-sm rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
               <ul className="divide-y divide-gray-200 dark:divide-gray-700">
                 {books.map(book => (
-                  <li key={book.id} className="p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors">
-                    <div>
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{book.title}</h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">{book.author} — {book.category}</p>
-                      <div className="mt-2 flex gap-2 text-xs font-semibold">
-                        <span className="bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-gray-700 dark:text-gray-300">Stan: {book.available_copies}/{book.total_copies}</span>
-                      </div>
-                    </div>
-                    <DeleteForm bookId={book.id} />
-                  </li>
+                  <BookItem key={book.id} book={book} />
                 ))}
               </ul>
             </div>

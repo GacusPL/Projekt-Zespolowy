@@ -1,8 +1,12 @@
 import { createBrowserClient } from '@supabase/ssr'
 
 export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_PROJECT_URL!,
-    process.env.NEXT_PUBLIC_PUBLISHABLE_KEY!
-  )
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!url || !key) {
+    throw new Error('Brak zmiennych środowiskowych Supabase w kliencie')
+  }
+
+  return createBrowserClient(url, key)
 }
